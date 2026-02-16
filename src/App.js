@@ -9,7 +9,7 @@ import Navbar from './pages/Navbar';
 import Invoices from './pages/Invoices';
 import { UserContext } from './context/UserContext';
 import ClientDetail from './pages/ClientDetail';
-
+import Register from './pages/Register';
 
 function App() {
   const [invoices, setInvoices] = useState(()=>{
@@ -83,7 +83,12 @@ function App() {
       <Routes>
         <Route path='/' 
           element={
-            <Navigate to={user ? "/dashboard" : '/login'}/>
+            <Navigate to={user ? "/dashboard" : '/register'}/>
+          }
+        />
+        <Route path='/register'
+          element={
+            <Register />
           }
         />
         <Route path='/invoices'
