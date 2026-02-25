@@ -1,10 +1,12 @@
 import React, {  useState, useEffect, useRef } from 'react'
 import {v4 as uuidv4 } from 'uuid'
 import { useNavigate, Link } from 'react-router-dom'
-import useClients from './hooks/useClients'
-import useProjects from './hooks/useProjects'
-import useAuth from './hooks/useAuth'
-import Modal from './Modal'
+import useClients from './useClients'
+import useProjects from '../projects/useProjects'
+import useAuth from '../Auth/useAuth'
+import Modal from '../../components/Modal'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 
 export default function Clients() {
     const [ search , setSearch] = useState("")
@@ -54,6 +56,7 @@ export default function Clients() {
         })
         setIsModalOpen(true)
     }
+
 
     function saveEdit(id){
         if (editingFields === "") return;
@@ -138,12 +141,7 @@ export default function Clients() {
     <div  className="page-title">
       <h1>Clients</h1>
         <div className="search-wrapper">
-          <input
-            className="search-input"
-            type='text'
-            onChange={(e)=> setSearch(e.target.value)}
-            placeholder='Search..'
-          />
+
         </div>
     </div>
     <div className="form-base">
@@ -185,6 +183,7 @@ export default function Clients() {
         <button type="submit">Add Client</button>
       </form>
     </div>
+    
 
     {clients.length > 0 && (
     <div className="table-wrapper">
@@ -259,10 +258,11 @@ export default function Clients() {
             </tr>
         </thead>
 
+
         <tbody>
             {filteredClients.map((filteredClient) => ( 
             <tr key={filteredClient.id}>
-                    <td><Link to={`/clients/${filteredClient.id}`}>{filteredClient.fullName}</Link></td>
+                    <td><Link className='client-link' to={`/clients/${filteredClient.id}`}>{filteredClient.fullName}</Link></td>
                     <td>{filteredClient.email}</td>
                     <td>{filteredClient.phone}</td>
                     <td>{filteredClient.company}</td>
@@ -271,13 +271,13 @@ export default function Clients() {
                         className="btn-delete btn"
                         onClick={() => deleteClient(filteredClient.id)}
                     >
-                        Delete
+                        <FontAwesomeIcon icon="trash"/>
                     </button>
                     <button
                         className='btn btn-edit'
                         onClick={() => startEdit(filteredClient)}
                     >
-                        Edit
+                        <FontAwesomeIcon icon="edit"/>
                     </button>
                     </td>
             </tr>

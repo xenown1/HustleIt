@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useContext } from 'react'
-import { UserContext } from '../context/UserContext'
-import { Link } from 'react-router-dom'
+import { UserContext } from '../../../context/UserContext'
 
-export default function Login() {
+export default function Register() {
     const { setUser } = useContext(UserContext)
     const navigate = useNavigate()
     const [formData, setFormData] = useState({
@@ -35,7 +34,7 @@ async function handleSubmit(e) {
     }
     
     try {
-        const response = await fetch('https://hustleit-backend-production.up.railway.app/api/login', {
+        const response = await fetch('https://hustleit-backend-production.up.railway.app/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
@@ -59,9 +58,8 @@ async function handleSubmit(e) {
         <input ref={inputRef} type='text' name='username' value={formData.username} onChange={handleChange}/>
         <label htmlFor='password'>password:</label>
         <input type='text' name='password' value={formData.password} onChange={handleChange}/>
-        <button type='submit' className='btn-submit'>Login</button>
+        <button type='submit' className='btn-submit'>Sign Up</button>
     </form>
-    <p>Don't have an account? <Link to="/register">Register</Link></p>
   </>
   )
 }

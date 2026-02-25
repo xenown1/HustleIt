@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 
 import { v4 as uuidv4} from 'uuid'
-import useClients from './hooks/useClients'
-import useProjects from './hooks/useProjects'
-import useInvoices from './hooks/useInvoices'
-import Modal from './Modal'
+import useClients from '../clients/useClients'
+import useProjects from '../projects/useProjects'
+import useInvoices from './useInvoices'
+import Modal from '../../components/Modal'
+import PrintableInvoice from './PrintableInvoice'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default function Invoices() {
   const {invoices, setInvoices} = useInvoices()
@@ -23,8 +25,16 @@ export default function Invoices() {
   const [editingId, setEditingId] = useState(null)
   const [editingFields, setEditingFields] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [printingInvoice, setPrintingInvoice] = useState(null)
 
 
+  function handlePrint(invoice){
+    setPrintingInvoice(invoice)
+    setTimeout(() =>{
+      window.print()
+    }, 100)
+  }
+  
   
   function startEdit(invoice){
     setEditingId(invoice.id)
@@ -54,6 +64,8 @@ export default function Invoices() {
   }
   
 
+  
+  
   function handleSaveInvoices(){
     if (!selectedProjectId) return window.alert("Select a project!");
 
@@ -92,6 +104,17 @@ export default function Invoices() {
     ))
   }
 
+  function isOverdue(invoice){
+    if (invoice.paid) return false
+
+    const today = new Date()
+    const dueDate = new Date(invoice.dueDate)
+
+    return dueDate < today
+  }
+
+
+  
   return (
   <>
     <div  className="page-title">
@@ -209,19 +232,35 @@ export default function Invoices() {
               <td>{filteredInvoice.clientEmail}</td>
               <td>{filteredInvoice.projectName}</td>
               <td>{filteredInvoice.invoiceNumber}</td>
-              <td>{filteredInvoice.paid ? "✅ Paid" : "❌ Unpaid"}</td>
+              <td>{filteredInvoice.paid ? "✅ Paid" : 
+                (isOverdue(filteredInvoice) ? 
+                <span>❌ OVERDUE</span> : "❌ Unpaid")}
+              </td>
               <td>{filteredInvoice.notes}</td>
               <td>{filteredInvoice.amount} $</td>
               <td>{filteredInvoice.issueDate}</td>
               <td>{filteredInvoice.dueDate}</td>
+              
               <td>
-                <button onClick={()=> handleDelete(filteredInvoice.id)}>Delete</button>
-                <button onClick={() => startEdit(filteredInvoice)}>Edit</button>
+                <button
+                className='btn btn-delete'
+                onClick={()=> handleDelete(filteredInvoice.id)}><FontAwesomeIcon icon="trash" /></button>
+                <button
+                className='btn btn-edit'
+                onClick={() => startEdit(filteredInvoice)}><FontAwesomeIcon icon="edit" /></button>
+                <button
+                className='btn btn-add' 
+                onClick={() => handlePrint(filteredInvoice)}
+                ><FontAwesomeIcon icon="print" /></button>
+                
                 </td>
             </tr>
         ))}
       </tbody>
     </table>
+    {printingInvoice && (
+      <PrintableInvoice invoice={printingInvoice} />
+    )}
   </>
   )
 }

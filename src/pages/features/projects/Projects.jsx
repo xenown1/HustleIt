@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { useNavigate } from 'react-router-dom'
-import useClients from './hooks/useClients'
-import useProjects from './hooks/useProjects'
-import useAuth from './hooks/useAuth'
-import Modal from './Modal'
+import useClients from '../clients/useClients'
+import useAuth from '../Auth/useAuth'
+import useProjects from './useProjects'
+import Modal from '../../components/Modal'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 
 export default function Projects() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -12,9 +14,16 @@ export default function Projects() {
   const { projects, setProjects } = useProjects()
   const { user } = useAuth()
   const [ search, setSearch] = useState("")
-  const filteredProjects = projects.filter(
-    p => p.name.toLowerCase().includes(search.toLowerCase())
+
+  const [statusFilter, setStatusFilter] = useState("ALL")
+  const finalProjects = projects
+  .filter(p =>
+    p.name.toLowerCase().includes(search.toLowerCase())
   )
+  .filter(p =>
+    statusFilter === "ALL" ? true : p.status === statusFilter
+  )
+
 
   const navigate = useNavigate()
   useEffect(() => {
@@ -44,6 +53,7 @@ export default function Projects() {
       setEditingId(project.id)
       setEditingFields({
           name: project.name,
+          clientId: project.clienId,
           status: project.status,
           amount: project.amount,
           paid: project.paid,
@@ -79,7 +89,7 @@ export default function Projects() {
           issueDate: "",
         
           paid: false
-       }
+        }
       )
       setIsModalOpen(false)
   }
@@ -142,6 +152,17 @@ export default function Projects() {
             onChange={(e)=> setSearch(e.target.value)}
             placeholder='Search..'
           />
+        <select 
+        onChange={e => setStatusFilter(e.target.value)} 
+        value={statusFilter}>
+            <option value="ALL">All</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Awaiting Client">Awaiting Client</option>
+            <option value="Not Started">Not Started</option>
+        </select>
+
+        
         </div>
     </div>
 
@@ -178,86 +199,88 @@ export default function Projects() {
     {projects && (
       <div className="table-wrapper">
         {isModalOpen && (
-<Modal onClose={() => setIsModalOpen(false)}>
-  <div className="modal-content">
-    <h2 className="modal-title">Edit Project</h2>
+          <Modal onClose={() => setIsModalOpen(false)}>
+            <div className="modal-content">
+              <h2 className="modal-title">Edit Project</h2>
+                
+              <div className="modal-field">
+                <label htmlFor="name">Project Name</label>
+                <input
+                  id="name"
+                  name="name"
+                  value={editingFields.name}
+                  onChange={handleEditChange}
+                />
+              </div>
 
-    <div className="modal-field">
-      <label htmlFor="name">Project Name</label>
-      <input
-        id="name"
-        name="name"
-        value={editingFields.name}
-        onChange={handleEditChange}
-      />
-    </div>
+              <div className="modal-field">
+                <label htmlFor='clientId'>Client Name</label>
+                <select name='clientId' value={editingFields.clientId} onChange={handleEditChange}>
+                  <option value="">Select a client</option>
+                  {clients.map((client) => (
+                    <option key={client.id} value={client.id}>
+                      {client.fullName}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-    <div className="modal-field">
-      <label htmlFor="clientId">Client ID</label>
-      <input
-        id="clientId"
-        name="clientId"
-        value={editingFields.clientId}
-        onChange={handleEditChange}
-      />
-    </div>
+              <div className="modal-field">
+                <label htmlFor="status">Status</label>
+                <input
+                  id="status"
+                  name="status"
+                  value={editingFields.status}
+                  onChange={handleEditChange}
+                />
+              </div>
 
-    <div className="modal-field">
-      <label htmlFor="status">Status</label>
-      <input
-        id="status"
-        name="status"
-        value={editingFields.status}
-        onChange={handleEditChange}
-      />
-    </div>
+              <div className="modal-field">
+                <label htmlFor="amount">Amount</label>
+                <input
+                  id="amount"
+                  name="amount"
+                  value={editingFields.amount}
+                  onChange={handleEditChange}
+                />
+              </div>
 
-    <div className="modal-field">
-      <label htmlFor="amount">Amount</label>
-      <input
-        id="amount"
-        name="amount"
-        value={editingFields.amount}
-        onChange={handleEditChange}
-      />
-    </div>
-
-    <div className="modal-field">
-      <label htmlFor="paid">Paid</label>
-      <select
-        id="paid"
-        name="paid"
-        value={editingFields.paid}
-        onChange={(e) =>
-          setEditingFields((prev) => ({
-            ...prev,
-            paid: e.target.value === "true",
-          }))
-        }
-      >
-        <option value={false}>No</option>
-        <option value={true}>Yes</option>
-      </select>
-    </div>
-
-    <div className="modal-actions">
-      <button
-        className="btn btn-edit"
-        onClick={() => saveEdit(editingId)}
-      >
-        Save
-      </button>
-
-      <button
-        className="btn btn-cancel"
-        onClick={cancelEdit}
-      >
-        Cancel
-      </button>
-    </div>
-
-  </div>
-</Modal>
+              <div className="modal-field">
+                <label htmlFor="paid">Paid</label>
+                <select
+                  id="paid"
+                  name="paid"
+                  value={editingFields.paid}
+                  onChange={(e) =>
+                    setEditingFields((prev) => ({
+                      ...prev,
+                      paid: e.target.value === "true",
+                    }))
+                  }
+                >
+                  <option value={false}>No</option>
+                  <option value={true}>Yes</option>
+                </select>
+              </div>
+                
+              <div className="modal-actions">
+                <button
+                  className="btn btn-edit"
+                  onClick={() => saveEdit(editingId)}
+                >
+                  Save
+                </button>
+                
+                <button
+                  className="btn btn-cancel"
+                  onClick={cancelEdit}
+                >
+                  Cancel
+                </button>
+              </div>
+                
+            </div>
+          </Modal>
 )}
 
       <table>
@@ -272,8 +295,9 @@ export default function Projects() {
           </tr>
         </thead>
         <tbody>
-          {filteredProjects.map((filteredProject) =>{
-            const client = clients.find(c => c.id === filteredProjects.clientId);
+          {finalProjects.map((filteredProject) => {
+
+            const client = clients.find(c => c.id === filteredProject.clientId);
             return (
               <tr key={filteredProject.id}>
                 
@@ -291,12 +315,12 @@ export default function Projects() {
                   <button
                   onClick={() => deleteProject(filteredProject.id)}
                   className='btn btn-delete'
-                  >Delete
+                  ><FontAwesomeIcon icon="trash" />
                   </button>
                   <button
                   onClick={() => startEdit(filteredProject)}
                   className='btn btn-edit'
-                  >Edit
+                  ><FontAwesomeIcon icon="edit" />
                   </button>
                 </td>
               </tr>

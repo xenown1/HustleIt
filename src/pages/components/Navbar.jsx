@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import useAuth from './hooks/useAuth'
+import useAuth from '../features/Auth/useAuth'
 export default function Navbar() {
     const { user, setUser} = useAuth()
     const navigate = useNavigate()
@@ -8,8 +8,6 @@ export default function Navbar() {
         setUser(null)
         navigate('/login')
     }
-
-
 
     return (
         <nav className="top-navbar">
@@ -20,6 +18,7 @@ export default function Navbar() {
                         <NavLink to="/clients" className="nav-item">Clients</NavLink>
                         <NavLink to="/projects" className="nav-item">Projects</NavLink>
                         <NavLink to="/invoices" className="nav-item">Invoices</NavLink>
+                        <NavLink to="/settings" className="nav-item">Settings</NavLink>
                         <button onClick={handleLogout} className='btn-logout'>Logout</button>
                     </>
                 ) : (
