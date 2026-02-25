@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
 export default function Clients() {
-    const [ search , setSearch] = useState("")
+    const [ search ] = useState("")
     const {clients, setClients} = useClients()
     const filteredClients = clients.filter(
         c=> c.fullName.toLowerCase().includes(search.toLowerCase())
