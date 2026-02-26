@@ -121,7 +121,7 @@ export default function Clients() {
     function handleSubmit(e) {
         e.preventDefault();
     
-        const { fullName, email, phone, company, paymentType } = clientInfo;
+        const { fullName, email, phone, company } = clientInfo;
     
         if (!fullName || !email || !phone || !company) {
             alert("Please fill out the form.");
