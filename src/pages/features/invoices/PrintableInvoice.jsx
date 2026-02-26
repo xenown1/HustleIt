@@ -2,11 +2,11 @@ import { useContext } from "react";
 import { UserContext } from "../../../context/UserContext";
 
 export default function PrintableInvoice({ invoice }) {
-    const { settingForms } = useContext(UserContext)
+    const { settingForms, clients } = useContext(UserContext)
   return (
     
     <div className="print-page">
-
+        
     <div className="invoice-header">
         <div className="invoice-brand">
             <h1>{settingForms.businessName}</h1>
@@ -18,7 +18,7 @@ export default function PrintableInvoice({ invoice }) {
         <div className="invoice-meta">
             <p><strong>Invoice #:</strong> {invoice.invoiceNumber}</p>
             <p><strong>Issue Date:</strong> {invoice.issueDate}</p>
-            <p><strong>Payment Type: </strong> {settingForms.paymentType}</p>
+            <p><strong>Payment Type: </strong> {clients.paymentType}</p>
             <p><strong>Due Date:</strong> {invoice.dueDate}</p>
         </div>
     </div>

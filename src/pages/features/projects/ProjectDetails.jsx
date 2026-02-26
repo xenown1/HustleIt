@@ -50,7 +50,6 @@ export default function ProjectDetails() {
                 <p>Status: {project.status}</p>
                 <p>Paid: {project.paid ? '✅' : '❌'}</p>
             </div>
-
             <div className="project-detail-section">
                 <h2>Related Invoices</h2>
                 {projectInvoices.length === 0 ? (

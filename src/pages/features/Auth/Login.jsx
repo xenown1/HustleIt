@@ -53,15 +53,42 @@ async function handleSubmit(e) {
         alert('Login failed!')
     }
 }
-  return (<>
-    <form onSubmit={handleSubmit}>
-        <label htmlFor='username'>username:</label>
-        <input ref={inputRef} type='text' name='username' value={formData.username} onChange={handleChange}/>
-        <label htmlFor='password'>password:</label>
-        <input type='text' name='password' value={formData.password} onChange={handleChange}/>
-        <button type='submit' className='btn-submit'>Login</button>
-    </form>
-    <p>Don't have an account? <Link to="/register">Register</Link></p>
-  </>
-  )
+return (
+  <div className="auth-container">
+    <div className="auth-card">
+      <h1 className="auth-title">Welcome Back</h1>
+
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="form-group">
+          <label htmlFor="username">Username</label>
+          <input
+            ref={inputRef}
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </div>
+
+        <button type="submit" className="btn-submit">
+          Login
+        </button>
+      </form>
+
+      <p className="auth-footer">
+        Don’t have an account? <Link to="/register">Register</Link>
+      </p>
+    </div>
+  </div>
+)
 }

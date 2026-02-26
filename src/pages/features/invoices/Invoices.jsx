@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { v4 as uuidv4} from 'uuid'
 import useClients from '../clients/useClients'
@@ -33,10 +33,19 @@ export default function Invoices() {
   const [selectedProjectId, setSelectedProjectId] = useState("")
   const selectedProject = projects.find(p => p.id === selectedProjectId)
   const selectedClient = clients.find(c => c.id === selectedProject?.clientId)
+  const [paymentTerms, setPaymentTerms] = useState("")
   const [editingId, setEditingId] = useState(null)
   const [editingFields, setEditingFields] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [printingInvoice, setPrintingInvoice] = useState(null)
+
+  useEffect(() => {
+    if (selectedClient && selectedClient.paymentType) {
+      setPaymentTerms(selectedClient.paymentType)
+    } else {
+      setPaymentTerms("")
+    }
+  }, [selectedClient])
 
   function handlePrint(invoice){
     setPrintingInvoice(invoice)
@@ -86,11 +95,13 @@ export default function Invoices() {
       dueDate: dueDate,
       notes: notes,
       paid: selectedProject.paid,
-      type: selectedProject.paymentType,
+      type: paymentTerms || selectedProject.paymentType,
+      paymentTerms: paymentTerms,
       
     }
     setInvoices(prev => [...prev, newInvoice])
     setSelectedProjectId("")
+    setPaymentTerms("")
     setIssueDate("")
     setDueDate("")
     setNotes("")
@@ -163,12 +174,17 @@ export default function Invoices() {
         onChange={e => setNotes(e.target.value)}
         placeholder="Add notes..."
       />
-      <select 
-        value={selectedProjectId ? selectedClient.id : ""}
-      >
-        <option value="Net 30">Net 30</option>
-        <option value="Half and Half">Half and Half</option>
-      </select>
+      {selectedClient && (
+        <select
+          value={paymentTerms}
+          onChange={e => setPaymentTerms(e.target.value)}
+        >
+          <option value="">Select payment terms</option>
+          <option value="net30">Net 30</option>
+          <option value="half">Half before / half after</option>
+          <option value="dueOnReceipt">Due on receipt</option>
+        </select>
+      )}
     <button onClick={handleSaveInvoices}>Save Invoice</button>
     </div>
     {isModalOpen && (
@@ -227,6 +243,7 @@ export default function Invoices() {
           <th>Email</th>
           <th>Project</th>
           <th>Invoice ID</th>
+          <th>Terms</th>
           <th>Status</th>
           <th>Notes</th>
           <th>Amount</th>
@@ -243,6 +260,7 @@ export default function Invoices() {
               <td>{filteredInvoice.clientEmail}</td>
               <td>{filteredInvoice.projectName}</td>
               <td>{filteredInvoice.invoiceNumber}</td>
+              <td>{filteredInvoice.paymentTerms || filteredInvoice.type || '-'}</td>
               <td>{filteredInvoice.paid ? "✅ Paid" : 
                 (isOverdue(filteredInvoice) ? 
                 <span>❌ OVERDUE</span> : "❌ Unpaid")}

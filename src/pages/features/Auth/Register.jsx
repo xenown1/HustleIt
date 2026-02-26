@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useContext } from 'react'
 import { UserContext } from '../../../context/UserContext'
 
@@ -52,14 +52,42 @@ async function handleSubmit(e) {
         alert('Login failed!')
     }
 }
-  return (<>
-    <form onSubmit={handleSubmit}>
-        <label htmlFor='username'>username:</label>
-        <input ref={inputRef} type='text' name='username' value={formData.username} onChange={handleChange}/>
-        <label htmlFor='password'>password:</label>
-        <input type='text' name='password' value={formData.password} onChange={handleChange}/>
-        <button type='submit' className='btn-submit'>Sign Up</button>
-    </form>
-  </>
-  )
+  return (
+  <div className="auth-container">
+    <div className="auth-card">
+      <h1 className="auth-title">Create Account</h1>
+
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="form-group">
+          <label htmlFor="username">Username</label>
+          <input
+            ref={inputRef}
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </div>
+
+        <button type="submit" className="btn-submit">
+          Sign Up
+        </button>
+      </form>
+
+      <p className="auth-footer">
+        Already have an account? <Link to="/login">Login</Link>
+      </p>
+    </div>
+  </div>
+)
 }

@@ -17,11 +17,13 @@ export default function Clients() {
     const uniqueCompanies = [...new Set(clients.map(c => c.company))].filter(Boolean)
     
     const finalClients = clients.filter(c => {
-      const matchesSearch = c.fullName.toLowerCase().includes(search.toLowerCase())
-      const matchesCompany = filterCompany === "" || c.company === filterCompany
-      
-      const matchesStatus = filterStatus === "all" || (filterStatus === "active" ? c.active : !c.active)
-      return matchesSearch && matchesCompany && matchesStatus
+
+        const matchesSearch = c.fullName.toLowerCase().includes(search.toLowerCase())
+        const matchesCompany = filterCompany === "" || c.company === filterCompany
+        
+        const matchesStatus = filterStatus === "all" || (filterStatus === "active" ? c.active : !c.active)
+        return matchesSearch && matchesCompany && matchesStatus
+
     })
 
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -44,7 +46,8 @@ export default function Clients() {
         email:"",
         phone:"",
         company:"",
-        active: false
+        active: false,
+        paymentType: ""
     })
 
     const [editingId, setEditingId] = useState(null)
@@ -52,16 +55,18 @@ export default function Clients() {
         fullName: "",
         email: "",
         phone: "",
-        company: ""
+        company: "",
+        paymentType: ""
     })
-    
-    function startEdit(client){
+
+    function startEdit(client) {
         setEditingId(client.id)
         setEditingFields({
             fullName: client.fullName,
             email: client.email,
             phone: client.phone,
-            company: client.company
+            company: client.company,
+            paymentType: client.paymentType || ""
         })
         setIsModalOpen(true)
     }
@@ -80,8 +85,14 @@ export default function Clients() {
 
     function cancelEdit(){
         setEditingId(null)
-        setEditingFields("")
-        setIsModalOpen(true)
+        setEditingFields({
+            fullName: "",
+            email: "",
+            phone: "",
+            company: "",
+            paymentType: ""
+        })
+        setIsModalOpen(false)
      }
     
 
@@ -110,7 +121,7 @@ export default function Clients() {
     function handleSubmit(e) {
         e.preventDefault();
     
-        const { fullName, email, phone, company } = clientInfo;
+        const { fullName, email, phone, company, paymentType } = clientInfo;
     
         if (!fullName || !email || !phone || !company) {
             alert("Please fill out the form.");
@@ -130,6 +141,7 @@ export default function Clients() {
             phone: "",
             company: "",
             active: false,
+            paymentType: ""
         });
       }
 
@@ -206,7 +218,17 @@ export default function Clients() {
                 value={clientInfo.company}
                 onChange={handleChange}
             />
-
+            <label htmlFor="paymentType">Preferred Payment</label>
+            <select
+                name="paymentType"
+                value={clientInfo.paymentType}
+                onChange={handleChange}
+            >
+                <option value="">Select terms</option>
+                <option value="net30">Net 30</option>
+                <option value="half">Half before / after</option>
+                <option value="dueOnReceipt">Due on receipt</option>
+            </select>
             <label htmlFor="active">
             <input
                 type="checkbox"
@@ -265,6 +287,34 @@ export default function Clients() {
                                     value={editingFields.company}
                                     onChange={handleEditChange}
                                 />
+                                <label htmlFor='paymentType'>Preferred Payment</label>
+                                <select
+                                    id='paymentType'
+                                    name='paymentType'
+                                    value={editingFields.paymentType}
+                                    onChange={handleEditChange}
+                                >
+                                    <option value="">Select terms</option>
+                                    <option value="net30">Net 30</option>
+                                    <option value="half">Half before / after</option>
+                                    <option value="dueOnReceipt">Due on receipt</option>
+                                </select>
+                                <label htmlFor='active'>Status</label>
+                                <select
+                                    id='active'
+                                    name='active'
+                                    value={editingFields.active}
+                                    onChange={(e) => 
+                                        setEditingFields(prev => ({
+                                            ...prev,
+                                            active: e.target.value === "true"
+                                        }))
+                                    }
+                                >
+                                    <option value="">Select status</option>
+                                    <option value={true}>✓ Active</option>
+                                    <option value={false}>○ Inactive</option>
+                                </select>
                             </div>
                             </div>
                             <div className="modal-actions">
@@ -280,10 +330,8 @@ export default function Clients() {
                             >
                                 Cancel
                             </button>
-                            
                         </div>
-                        </Modal>
-
+                    </Modal>
                 )}
         <table className="clients-table">
         <thead>
@@ -292,6 +340,7 @@ export default function Clients() {
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Company</th>
+                <th>Payment Terms</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
@@ -305,6 +354,7 @@ export default function Clients() {
                     <td>{filteredClient.email}</td>
                     <td>{filteredClient.phone}</td>
                     <td>{filteredClient.company}</td>
+                    <td>{filteredClient.paymentType || '-'}</td>
                     <td>{filteredClient.active ? '✓ Active' : '○ Inactive'}</td>
                     <td>
                     <button

@@ -18,13 +18,15 @@ export default function Dashboard() {
       type: 'project',
       name: p.name,
       date: p.issueDate,
-      clientId: p.clientId
+      clientId: p.clientId,
+      projectId: p.id
     }))
     const invoiceActivities = invoices.map(i => ({
       type: 'invoice',
       name: i.invoiceNumber,
       paid: i.paid,
       clientId: i.clientId,
+      projectId: i.projectId,
       date: i.issueDate
     }))
     const allActivities = [...clientActivities, ...projectActivities, ...invoiceActivities]
@@ -79,17 +81,23 @@ export default function Dashboard() {
   return (
     <div className="dashboard-container">
       <h1 className="page-title">Dashboard</h1>
-      <div className="revenue-stats">
-        <p className='revenue-box'>Total Revenue: {formatCurrency(totalRevenue)}</p>
-        <p className='revenue-box'>Total Clients: {totalClients}</p>
-        <p className='revenue-box'>Total Projects: {totalProjects}</p>
-        <p className='revenue-box'>Amount Unpaid: {formatCurrency(unpaidTotal)}</p>
-        <p className='revenue-box'>Ongoing Projects: {activeProjects}</p>
-        <p className='revenue-box'>⚠️ Overdue Invoices: {overdueCount}</p>
-        <p className='revenue-box'>💸 Overdue Amount: {formatCurrency(overdueAmount)}</p>
-      </div>
-    
-<div className="recent-activity">
+
+      <section className="dashboard-section stats-section">
+        
+        <div className="revenue-stats">
+          <p className='revenue-box'>Total Revenue: {formatCurrency(totalRevenue)}</p>
+          <p className='revenue-box'>Total Clients: {totalClients}</p>
+          <p className='revenue-box'>Total Projects: {totalProjects}</p>
+          <p className='revenue-box'>Amount Unpaid: {formatCurrency(unpaidTotal)}</p>
+          <p className='revenue-box'>Ongoing Projects: {activeProjects}</p>
+          <p className='revenue-box'>⚠️ Overdue Invoices: {overdueCount}</p>
+          <p className='revenue-box'>💸 Overdue Amount: {formatCurrency(overdueAmount)}</p>
+        </div>
+      </section>
+      
+<div className="dashboard-layout">
+  <div className="sidebar">
+    <div className="recent-activity">
   <div className="recent-activity-header">
     <h2 className="recent-activity-title">Recent Activity</h2>
   </div>
@@ -97,6 +105,7 @@ export default function Dashboard() {
     {getRecentActivity().length === 0 && <p>No recent activity.</p>}
     {getRecentActivity().map((activity, index) => {
       let displayElement = activity.name;
+
       if (activity.type === 'client' && activity.clientId) {
         displayElement = (
           <Link className='regular-text' to={`/clients/${activity.clientId}`}>
@@ -105,12 +114,18 @@ export default function Dashboard() {
         );
       }
 
+      const content = activity.type === 'project' && activity.projectId ? (
+        <Link to={`/projects/${activity.projectId}`}>{activity.name}</Link>
+      ) : (
+        displayElement
+      );
+
       return (
         <li key={index} className="activity-item">
           <div className="activity-content">
             <span className="activity-type">{activity.type}</span>
             <span className="activity-name">
-              {displayElement}
+              {content}
             </span>
           </div>
           <span className="activity-meta">
@@ -122,9 +137,11 @@ export default function Dashboard() {
       )
     })}
   </ul>
-</div>
+    </div>
+  </div>
 
-<div className="recent-projects">
+  <div className="main-content">
+    <div className="recent-projects">
   <h2>Recent Projects</h2>
   <div className="cards-grid">
     {projects.length === 0 && <p>No recent projects.</p>}
@@ -155,9 +172,9 @@ export default function Dashboard() {
       )
     })}
   </div>
-</div>
-
-<div className="recent-invoices">
+    </div>
+    
+    <div className="recent-invoices">
   <h2>Recent Invoices</h2>
   <div className="cards-grid">
     {invoices.slice(0, 5).map(i => {
@@ -175,6 +192,8 @@ export default function Dashboard() {
         </div>
       )
     })}
+  </div>
+</div>
   </div>
 </div>
     </div>
