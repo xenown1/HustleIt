@@ -43,25 +43,16 @@
 body {
   background: var(--bg-main);
   color: var(--text-main);
-  font-family: Inter, system-ui, sans-serif;
+  font-family: "Sora", sans-serif;
   transition: background 0.3s ease, color 0.3s ease;
-
 }
 
 /* ===== APP LAYOUT ===== */
 .app-layout {
-  
   min-height: 100vh;
 }
 
-/* ===== DASHBOARD CONTAINER ===== */
-.dashboard-container {
-  padding: 40px;
-  background: var(--bg-dark); /* main black background */
-  color: var(--text-primary);
-  min-height: 100vh;
-  font-family: Arial, Helvetica, sans-serif;
-}
+
 
 /* ===== PAGE TITLE ===== */
 .page-title {
@@ -97,7 +88,7 @@ body {
 /* ===== CARDS LAYOUT ===== */
 .recent-projects,
 .recent-invoices {
-  margin-bottom: 40px;
+  margin: 40px 0px;
 }
 
 .recent-projects h2,
@@ -1219,20 +1210,16 @@ textarea {
 }
 
 /* ===== DASHBOARD CONTAINER ===== */
-.dashboard-container {
-  padding: 40px;
-  background: var(--bg-dark); /* main black background */
-  color: var(--text-primary);
-  min-height: 100vh;
-  font-family: Arial, Helvetica, sans-serif;
-}
 
 /* ===== PAGE TITLE ===== */
 .page-title {
-  font-size: 28px;
+  font-size: 14px;
   font-weight: bold;
   margin-bottom: 30px;
 }
+
+
+
 
 /* ===== REVENUE STATS ===== */
 .revenue-stats {
@@ -1341,4 +1328,244 @@ textarea {
   .project-card, .invoice-card {
     padding: 15px;
   }
+}
+
+.recent-activity {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  max-width: 500px; /* prevents it from stretching stupidly wide */
+  transition: background 0.2s ease, color 0.2s ease;
+  height: 300px;
+  overflow-y: auto;
+}
+
+.recent-activity-header {
+  margin-bottom: 16px;
+}
+
+.recent-activity-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.activity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-content {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.activity-type {
+  background: var(--accent);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.activity-name {
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.activity-date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.filter-dropdown {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: white;
+}
+
+.filter-dropdown:hover {
+  border-color: #999;
+}
+
+.filter-search {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.regular-text {
+  color: var(--accent);
+  font-size: 14px;
+}
+
+/* ============================= */
+/* PROJECT DETAILS PAGE */
+/* ============================= */
+
+.project-details {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 30px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Back Button */
+.project-details .btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 20px;
+  transition: 0.2s ease;
+}
+
+.project-details .btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Title & Client Info */
+.project-details h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.project-details p {
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.project-details a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.project-details a:hover {
+  text-decoration: underline;
+}
+
+/* ============================= */
+/* STAT CARD */
+/* ============================= */
+
+.stat-card {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  background: rgba(255,255,255,0.02);
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 40px;
+}
+
+.stat-card p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.stat-card p strong {
+  display: block;
+  font-size: 18px;
+  color: var(--text-main);
+  margin-top: 4px;
+}
+
+.project-detail-section {
+  margin-top: 30px;
+}
+
+.project-detail-section h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+
+.table {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  background: rgba(255,255,255,0.03);
+  padding: 14px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-color);
+  font-size: 14px;
+  transition: background 0.15s ease;
+}
+
+.table-row:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.table-row.total {
+  font-weight: 700;
+  background: rgba(255,255,255,0.04);
+}
+
+
+.status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.status.paid {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.status.unpaid {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+
+[data-theme="light"] .project-details {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.05);
 }

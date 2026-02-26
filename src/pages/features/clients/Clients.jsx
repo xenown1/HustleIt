@@ -9,11 +9,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
 export default function Clients() {
-    const [ search ] = useState("")
+    const [ search, setSearch ] = useState("")
+    const [ filterCompany, setFilterCompany ] = useState("")
+    const [ filterStatus, setFilterStatus ] = useState("all")
     const {clients, setClients} = useClients()
-    const filteredClients = clients.filter(
-        c=> c.fullName.toLowerCase().includes(search.toLowerCase())
-    )
+    
+    const uniqueCompanies = [...new Set(clients.map(c => c.company))].filter(Boolean)
+    
+    const finalClients = clients.filter(c => {
+      const matchesSearch = c.fullName.toLowerCase().includes(search.toLowerCase())
+      const matchesCompany = filterCompany === "" || c.company === filterCompany
+      
+      const matchesStatus = filterStatus === "all" || (filterStatus === "active" ? c.active : !c.active)
+      return matchesSearch && matchesCompany && matchesStatus
+    })
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const inputRef= useRef(null)
@@ -72,8 +81,9 @@ export default function Clients() {
     function cancelEdit(){
         setEditingId(null)
         setEditingFields("")
-        setIsModalOpen(false)
-    }
+        setIsModalOpen(true)
+     }
+    
 
 
     function handleChange(e){
@@ -85,21 +95,14 @@ export default function Clients() {
         }));
     }
 
-
-
     function deleteClient(idToDelete){
         const hasItems = projects.some(
             p => p.clientId === idToDelete && p.status !== "Completed"
         )
-
-
-
         if (hasItems){
             alert("Cannot delete client with existing projects.")
             return;
         }
-
-        
         setClients(prev => prev.filter(c => c.id !== idToDelete))
     }
     
@@ -140,48 +143,83 @@ export default function Clients() {
   <>
     <div  className="page-title">
       <h1>Clients</h1>
-        <div className="search-wrapper">
-
+        <div className="filter-search">
+            <input 
+                type="text" 
+                placeholder="Search clients..." 
+                value={search} 
+                onChange={(e) => setSearch(e.target.value)} 
+            />
+            <select 
+                value={filterCompany} 
+                onChange={(e) => setFilterCompany(e.target.value)}
+                className="filter-dropdown"
+            >
+                <option value="">All Companies</option>
+                {uniqueCompanies.map(company => (
+                <option key={company} value={company}>{company}</option>
+            ))}
+            </select>
+            <select 
+                value={filterStatus} 
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="filter-dropdown"
+            >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
         </div>
     </div>
     <div className="form-base">
-      <form onSubmit={handleSubmit} className="client-form">
-        <label htmlFor="fullName">Client Name</label>
-        <input
-            ref={inputRef}
-            type="text"
-            name="fullName"
-            value={clientInfo.fullName}
-            onChange={handleChange}
-        />
-        
+        <form onSubmit={handleSubmit} className="client-form">
+            <label htmlFor="fullName">Client Name</label>
+            <input
+                ref={inputRef}
+                type="text"
+                name="fullName"
+                value={clientInfo.fullName}
+                onChange={handleChange}
+            />
 
-        <label htmlFor="email">Email</label>
-        <input
-            type="text"
-            name="email"
-            value={clientInfo.email}
-            onChange={handleChange}
-        />
 
-        <label htmlFor="phone">Phone</label>
-        <input
-            type="text"
-            name="phone"
-            value={clientInfo.phone}
-            onChange={handleChange}
-        />
+            <label htmlFor="email">Email</label>
+            <input
+                type="text"
+                name="email"
+                value={clientInfo.email}
+                onChange={handleChange}
+            />
 
-        <label htmlFor="company">Company</label>
-        <input
-            type="text"
-            name="company"
-            value={clientInfo.company}
-            onChange={handleChange}
-        />
+            <label htmlFor="phone">Phone</label>
+            <input
+                type="text"
+                name="phone"
+                value={clientInfo.phone}
+                onChange={handleChange}
+            />
 
-        <button type="submit">Add Client</button>
-      </form>
+            <label htmlFor="company">Company</label>
+            <input
+                type="text"
+                name="company"
+                value={clientInfo.company}
+                onChange={handleChange}
+            />
+
+            <label htmlFor="active">
+            <input
+                type="checkbox"
+                id="active"
+                name="active"
+                checked={clientInfo.active}
+                onChange={(e) => setClientInfo(prev => ({...prev, active: e.target.checked}))}
+            />
+            Active Client
+            </label>
+
+            <button type="submit">Add Client</button>
+        </form>
     </div>
     
 
@@ -254,18 +292,20 @@ export default function Clients() {
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Company</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
 
 
         <tbody>
-            {filteredClients.map((filteredClient) => ( 
+            {finalClients.map((filteredClient) => ( 
             <tr key={filteredClient.id}>
                     <td><Link className='client-link' to={`/clients/${filteredClient.id}`}>{filteredClient.fullName}</Link></td>
                     <td>{filteredClient.email}</td>
                     <td>{filteredClient.phone}</td>
                     <td>{filteredClient.company}</td>
+                    <td>{filteredClient.active ? '✓ Active' : '○ Inactive'}</td>
                     <td>
                     <button
                         className="btn-delete btn"

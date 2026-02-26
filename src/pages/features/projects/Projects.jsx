@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import useClients from '../clients/useClients'
 import useAuth from '../Auth/useAuth'
 import useProjects from './useProjects'
@@ -16,14 +16,17 @@ export default function Projects() {
   const [ search, setSearch] = useState("")
 
   const [statusFilter, setStatusFilter] = useState("ALL")
-  const finalProjects = projects
-  .filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  )
-  .filter(p =>
-    statusFilter === "ALL" ? true : p.status === statusFilter
-  )
+  const finalProjects = projects.filter(p => {
+    
+  const matchesProjectName =  p.name.toLowerCase().includes(search.toLowerCase())
+  
+  const matchesStatus = statusFilter === "ALL" ? true : p.status === statusFilter
 
+  return matchesProjectName && matchesStatus
+  })
+
+
+  
 
   const navigate = useNavigate()
   useEffect(() => {
@@ -53,7 +56,7 @@ export default function Projects() {
       setEditingId(project.id)
       setEditingFields({
           name: project.name,
-          clientId: project.clienId,
+          clientId: project.clientId,
           status: project.status,
           amount: project.amount,
           paid: project.paid,
@@ -77,17 +80,11 @@ export default function Projects() {
       setEditingId(null)
       setEditingFields(
         {
-        
           name: "",
-        
           clientId: "",
-        
           status: "",
-        
           amount: "",
-        
           issueDate: "",
-        
           paid: false
         }
       )
@@ -136,6 +133,7 @@ export default function Projects() {
 
   function handleEditChange(e){
     const { name, value } = e.target;
+    
     setEditingFields(prev => 
       ({...prev, [name] : value})
     )
@@ -227,12 +225,17 @@ export default function Projects() {
 
               <div className="modal-field">
                 <label htmlFor="status">Status</label>
-                <input
+                <select
                   id="status"
                   name="status"
                   value={editingFields.status}
                   onChange={handleEditChange}
-                />
+                >
+                  <option value="Not Started">Not Started</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Awaiting Client">Awaiting Client</option>
+                </select>
               </div>
 
               <div className="modal-field">
@@ -296,12 +299,11 @@ export default function Projects() {
         </thead>
         <tbody>
           {finalProjects.map((filteredProject) => {
-
             const client = clients.find(c => c.id === filteredProject.clientId);
             return (
               <tr key={filteredProject.id}>
                 
-                <td>{filteredProject.name}</td>
+                <td><Link to={`/projects/${filteredProject.id}`}>{filteredProject.name}</Link></td>
                 
                 <td>{client ? client.fullName : "Deleted Client"}</td>
 

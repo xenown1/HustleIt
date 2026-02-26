@@ -1,11 +1,36 @@
 import React, { useEffect, useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate ,Link} from 'react-router-dom'
 import { UserContext } from '../../context/UserContext'
 
 
 export default function Dashboard() {
   const { clients, projects, user, invoices } = useContext(UserContext)
-  const navigate = useNavigate()
+  const navigate = useNavigate()  
+  function getRecentActivity() {
+    const clientActivities = clients.map(c => ({
+      type: 'client',
+      name: c.fullName,
+      company: c.company,
+      clientId: c.id,
+      date: c.createdAt || c.joinedDate || null
+    }))
+    const projectActivities = projects.map(p => ({
+      type: 'project',
+      name: p.name,
+      date: p.issueDate,
+      clientId: p.clientId
+    }))
+    const invoiceActivities = invoices.map(i => ({
+      type: 'invoice',
+      name: i.invoiceNumber,
+      paid: i.paid,
+      clientId: i.clientId,
+      date: i.issueDate
+    }))
+    const allActivities = [...clientActivities, ...projectActivities, ...invoiceActivities]
+    allActivities.sort((a, b) => new Date(b.date || b.issueDate) - new Date(a.date || a.issueDate))
+    return allActivities.slice(0, 10)
+  }
 
   useEffect(() => {
     if (!user) navigate('/login')
@@ -44,7 +69,10 @@ export default function Dashboard() {
 
   const getClient = clientId => clients.find(c => c.id === clientId) || {}
   const getProject = projectId => projects.find(p => p.id === projectId) || {}
-
+  const clientFullName = clientId => {
+    const client = clients.find(c => c.id === clientId)
+    return client ? client.fullName : "Unknown Client"
+  }
   
 
 
@@ -60,21 +88,69 @@ export default function Dashboard() {
         <p className='revenue-box'>⚠️ Overdue Invoices: {overdueCount}</p>
         <p className='revenue-box'>💸 Overdue Amount: {formatCurrency(overdueAmount)}</p>
       </div>
+    
+<div className="recent-activity">
+  <div className="recent-activity-header">
+    <h2 className="recent-activity-title">Recent Activity</h2>
+  </div>
+  <ul className="activity-list">
+    {getRecentActivity().length === 0 && <p>No recent activity.</p>}
+    {getRecentActivity().map((activity, index) => {
+      let displayElement = activity.name;
+      if (activity.type === 'client' && activity.clientId) {
+        displayElement = (
+          <Link className='regular-text' to={`/clients/${activity.clientId}`}>
+            {clientFullName(activity.clientId)}
+          </Link>
+        );
+      }
+
+      return (
+        <li key={index} className="activity-item">
+          <div className="activity-content">
+            <span className="activity-type">{activity.type}</span>
+            <span className="activity-name">
+              {displayElement}
+            </span>
+          </div>
+          <span className="activity-meta">
+            {activity.type === 'client' && activity.company ? `${activity.company}` : ''}
+            {activity.type === 'project' && activity.date ? `Created at - (${formatDate(activity.date)})` : ''}
+            {activity.type === 'invoice' && activity.paid !== undefined ? (activity.paid ? "Paid" : "Unpaid") : ''}
+          </span>
+        </li>
+      )
+    })}
+  </ul>
+</div>
 
 <div className="recent-projects">
   <h2>Recent Projects</h2>
   <div className="cards-grid">
+    {projects.length === 0 && <p>No recent projects.</p>}
     {projects.slice(0, 5).map(p => {
       const client = getClient(p.clientId)
+        const hasClient = client && client.id;
+
       return (
         <div key={p.id} className='project-card'>
           <h3>{p.name}</h3>
-          <p>Client: {client.fullName || "Unknown Client"}</p>
+      <p>
+        Client:{' '}
+        {hasClient ? (
+          <Link to={`/clients/${client.id}`}>
+            {client.fullName}
+          </Link>
+        ) : (
+          'Unknown Client'
+        )}
           <p>Amount: {formatCurrency(Number(p.amount))}</p>
           <p>Due: {formatDate(p.dueDate || p.issueDate)}</p>
           {getStatusBadge(p.status)}
           {getPaymentBadge(p.paid)}
           {getOverdueBadge(p.dueDate || p.issueDate, p.paid)}
+      </p>
+
         </div>
       )
     })}

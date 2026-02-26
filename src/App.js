@@ -13,7 +13,7 @@ import ClientDetail from './pages/features/clients/ClientDetail';
 import Register from './pages/features/Auth/Register';
 import PrintableInvoice from './pages/features/invoices/PrintableInvoice';
 import Settings from './pages/features/settings/Settings';
-
+import ProjectDetails from './pages/features/projects/ProjectDetails';
 
 
 function App() {
@@ -181,6 +181,11 @@ function App() {
         <Route path="/projects"
           element={
             <Projects />
+          }
+        />
+        <Route path='/projects/:id'
+          element={
+            <ProjectDetails />
           }
         />
         <Route path="/dashboard" 

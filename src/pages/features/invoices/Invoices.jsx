@@ -11,9 +11,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 export default function Invoices() {
   const {invoices, setInvoices} = useInvoices()
   const [search, setSearch] = useState("")
-  const filteredInvoices = invoices.filter(
-    i => i.clientName.toLowerCase().includes(search.toLowerCase())
-  )
+  const filteredInvoices = invoices.filter(i => {
+    const s = search.toLowerCase()
+    if (!s) return true
+    return (
+      i.clientName.toLowerCase().includes(s) ||
+      i.projectName.toLowerCase().includes(s) ||
+      i.invoiceNumber.toLowerCase().includes(s) ||
+      i.companyName.toLowerCase().includes(s) ||
+      i.clientEmail.toLowerCase().includes(s) ||
+      i.notes.toLowerCase().includes(s) ||
+      String(i.amount).toLowerCase().includes(s)
+    )
+  })
+
   const { clients } = useClients()
   const { projects } = useProjects()
   const [notes, setNotes] = useState("")
@@ -27,14 +38,12 @@ export default function Invoices() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [printingInvoice, setPrintingInvoice] = useState(null)
 
-
   function handlePrint(invoice){
     setPrintingInvoice(invoice)
     setTimeout(() =>{
       window.print()
     }, 100)
   }
-  
   
   function startEdit(invoice){
     setEditingId(invoice.id)
@@ -58,13 +67,7 @@ export default function Invoices() {
     setIsModalOpen(false)
   }
 
-  function cancelEdit(){
-    setEditingId(null)
-    setEditingFields("")
-  }
-  
 
-  
   
   function handleSaveInvoices(){
     if (!selectedProjectId) return window.alert("Select a project!");
@@ -82,7 +85,9 @@ export default function Invoices() {
       issueDate: issueDate,
       dueDate: dueDate,
       notes: notes,
-      paid: selectedProject.paid
+      paid: selectedProject.paid,
+      type: selectedProject.paymentType,
+      
     }
     setInvoices(prev => [...prev, newInvoice])
     setSelectedProjectId("")
@@ -158,6 +163,12 @@ export default function Invoices() {
         onChange={e => setNotes(e.target.value)}
         placeholder="Add notes..."
       />
+      <select 
+        value={selectedProjectId ? selectedClient.id : ""}
+      >
+        <option value="Net 30">Net 30</option>
+        <option value="Half and Half">Half and Half</option>
+      </select>
     <button onClick={handleSaveInvoices}>Save Invoice</button>
     </div>
     {isModalOpen && (
@@ -200,7 +211,7 @@ export default function Invoices() {
           </button>
             <button 
               className='btn btn-cancel'
-              onClick={cancelEdit}>Cancel
+              onClick={() => setIsModalOpen(false)}>Cancel
           </button>
           </div>
 
@@ -252,7 +263,6 @@ export default function Invoices() {
                 className='btn btn-add' 
                 onClick={() => handlePrint(filteredInvoice)}
                 ><FontAwesomeIcon icon="print" /></button>
-                
                 </td>
             </tr>
         ))}

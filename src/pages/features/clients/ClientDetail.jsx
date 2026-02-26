@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useContext } from 'react'
 import { UserContext } from '../../../context/UserContext'
 import { useParams } from 'react-router-dom'
@@ -18,7 +19,7 @@ export default function ClientDetail() {
     .filter(p=> p.paid === false)
     .reduce((total, p) => total + Number(p.amount),0)
     const clientInvoices = invoices.filter(i => i.clientId === id)
-  
+    const navigate = useNavigate()
     const [editingId, setEditingId] = useState(null)
     const [editingFields, setEditingFields] = useState({
       fullName: "",
@@ -61,6 +62,7 @@ export default function ClientDetail() {
     }
   return (
   <>
+  <button onClick={() => navigate(-1)} className="btn">← Back</button>
     <div className='client-details'>
         <div className='client-card'>
           {client && (
@@ -154,16 +156,20 @@ export default function ClientDetail() {
           <span>Amount</span>
           <span>Status</span>
         </div>
-        {clientInvoices.map(i => (
+        {clientInvoices.length === 0 ? (
+          <p>No Invoices</p>
+        ) : (
+        clientInvoices.map(i => (
           <div key={i.id} className="table-row">
             <span>{i.invoiceNumber}</span>
             <span>${i.amount}</span>
             <span className={`status ${i.paid ? "paid" : "unpaid"}`}>{i.paid ? "Paid" : "Unpaid"}</span>
           </div>
-        ))}
+        ))
+        )}
       </div>
     </div>
-    </div>
+  </div>
   </>
   )
-}
+} 
