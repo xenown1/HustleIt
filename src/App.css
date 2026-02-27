@@ -400,6 +400,35 @@ tr:hover {
   gap: 30px;
 }
 
+/* Print helpers: hide printable component on screen, show only during printing */
+.print-only {
+  display: none;
+}
+
+@media print {
+  /* hide everything by default */
+  body * {
+    visibility: hidden;
+  }
+
+  /* show the printable area */
+  .print-only, .print-only * {
+    visibility: visible;
+  }
+
+  .print-only {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* ensure interactive UI is not printed */
+  .no-print {
+    display: none !important;
+  }
+}
+
 /* Nav Items */
 .nav-item {
   text-decoration: none;
@@ -978,14 +1007,7 @@ textarea {
 }
 
 /* ===== PAGE WRAPPER ===== */
-.print-page {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 40px;
-  background: var(--text-main);
-  color: var(--bg-main);
-  font-family: Arial, Helvetica, sans-serif;
-}
+
 
 /* ===== HEADER LAYOUT ===== */
 .invoice-header {

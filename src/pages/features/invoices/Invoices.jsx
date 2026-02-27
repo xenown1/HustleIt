@@ -132,7 +132,8 @@ export default function Invoices() {
 
   
   return (
-  <>
+  <div className="invoices-root">
+    <div className="no-print">
     <div  className="page-title">
       <h1>Invoices</h1>
         <div className="search-wrapper">
@@ -286,9 +287,12 @@ export default function Invoices() {
         ))}
       </tbody>
     </table>
-    {printingInvoice && (
-      <PrintableInvoice invoice={printingInvoice} />
-    )}
-  </>
+    </div>
+    <div className="print-only">
+      {printingInvoice && (
+        <PrintableInvoice invoice={printingInvoice} />
+      )}
+    </div>
+  </div>
   )
 }
