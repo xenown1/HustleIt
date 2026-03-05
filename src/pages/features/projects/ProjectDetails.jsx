@@ -82,7 +82,7 @@ export default function ProjectDetails() {
             <button onClick={() => setIsModalOpen(true)} className="btn btn-edit"><FontAwesomeIcon icon="edit" /> Edit</button>
             
             {isModalOpen && (
-                <Modal onClose={() => setIsModalOpen(false)}>
+                <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                     <div className="modal-content">
                         <h2 className="modal-title">Edit Project</h2>
                         <div className="modal-field">

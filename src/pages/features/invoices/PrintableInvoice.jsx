@@ -1,25 +1,31 @@
 import { useContext } from "react";
 import { UserContext } from "../../../context/UserContext";
 
-export default function PrintableInvoice({ invoice }) {
-    const { settingForms, clients } = useContext(UserContext)
-  return (
-    
-    <div className="print-page">
-        
-    <div className="invoice-header">
-        <div className="invoice-brand">
-            <h1>{settingForms.businessName}</h1>
-            <p>{settingForms.address}</p>
-            <p>{settingForms.email}</p>
-            <p>{settingForms.phone}</p>
-        </div>
+const formatCurrency = amount =>
+  Number(amount).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+const formatDate = dateString =>
+  new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 
+export default function PrintableInvoice({ invoice }) {
+    const { settingForms, clients } = useContext(UserContext);
+    const client = clients.find(c => c.id === invoice.clientId) || {};
+    const paymentText = invoice.paymentTerms || client.paymentType || 'n/a';
+    
+  return (
+    <div className="print-page">
+        <div className="invoice-header">
+            <div className="invoice-brand">
+                <h1>{settingForms.businessName}</h1>
+                <p>{settingForms.address}</p>
+                <p>{settingForms.email}</p>
+                <p>{settingForms.phone}</p>
+            </div>
+            
         <div className="invoice-meta">
             <p><strong>Invoice #:</strong> {invoice.invoiceNumber}</p>
-            <p><strong>Issue Date:</strong> {invoice.issueDate}</p>
-            <p><strong>Payment Type: </strong> {clients.paymentType}</p>
-            <p><strong>Due Date:</strong> {invoice.dueDate}</p>
+            <p><strong>Issue Date:</strong> {formatDate(invoice.issueDate)}</p>
+            <p><strong>Payment:</strong> {paymentText}</p>
+            <p><strong>Due Date:</strong> {formatDate(invoice.dueDate)}</p>
         </div>
     </div>
 
@@ -36,21 +42,21 @@ export default function PrintableInvoice({ invoice }) {
             <tr>
                 <th>Project</th>
                 <th>Status</th>
-                <th>Amount</th>
+                <th>Amount ({settingForms.currency})</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
+            <tr className="change-color">
                 <td>{invoice.projectName}</td>
                 <td>{invoice.paid ? "Paid" : "Unpaid"}</td>
-                <td>${invoice.amount} {settingForms.currency}</td>
+                <td>{formatCurrency(invoice.amount)}</td>
             </tr>
         </tbody>
     </table>
 
     <div className="invoice-total">
         <p>
-            <strong>Total:</strong> ${invoice.amount}
+            <strong>Total:</strong> {formatCurrency(invoice.amount)}
         </p>
     </div>
 

@@ -102,7 +102,7 @@ export default function Settings() {
                         <input name="paymentType" value={settingForms.paymentType} onChange={handleChange} />
                     </div>
 
-                    <div className="form-group">
+                    <div className="modal-field">
                         <label>Currency: </label>
                         <select name="currency" value={settingForms.currency} onChange={handleChange}>
                             <option value="CAD">CAD</option>
@@ -126,9 +126,28 @@ export default function Settings() {
 
         {activeTab === "account" && (<>
             <h1 className="settings-title">Account Settings</h1>
-            <div className="settings-placeholder">
-                <p>Account preferences and security settings will go here.</p>
-            </div>
+            <form className="settings-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label>Username</label>
+                    <input name="username" value={settingForms.username} onChange={handleChange} />
+                </div>
+
+                <div className="form-group">
+                    <label>Password</label>
+                    <input name="password" type="password" value={settingForms.password} onChange={handleChange} />
+                </div>
+
+                <div className="form-group">
+                    <label>Confirm Password</label>
+                    <input name="confirmPassword" type="password" value={settingForms.confirmPassword} onChange={handleChange} />
+                </div>
+
+                <div className="form-actions">
+                    <button type="submit" className="btn btn-edit">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
         </>)}
       </div>
     </div>

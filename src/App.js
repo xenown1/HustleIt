@@ -14,6 +14,7 @@ import Register from './pages/features/Auth/Register';
 import PrintableInvoice from './pages/features/invoices/PrintableInvoice';
 import Settings from './pages/features/settings/Settings';
 import ProjectDetails from './pages/features/projects/ProjectDetails';
+import Expenses from './pages/features/expenses/Expenses';
 
 
 function App() {
@@ -100,6 +101,15 @@ function App() {
         return [];
       }
     })
+
+    const [expenses, setExpenses] = useState(() => {
+      try {
+        const savedExpenses = localStorage.getItem("expenses");
+        return savedExpenses ? JSON.parse(savedExpenses) : []
+      } catch {
+        return [];
+      }
+    })
     
     useEffect(() => {
       localStorage.setItem("settingForms", JSON.stringify(settingForms))
@@ -107,16 +117,18 @@ function App() {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("clients", JSON.stringify(clients));
       localStorage.setItem("projects", JSON.stringify(projects));
-    }, [clients, projects, user, invoices, settingForms])
+      localStorage.setItem("expenses", JSON.stringify(expenses));
+    }, [clients, projects, user, invoices, settingForms, expenses])
 
 
   return (
   <UserContext.Provider value={{
       user, setUser,
-      projects,setProjects,
+      projects, setProjects,
       clients, setClients,
       invoices, setInvoices,
-      settingForms, setSettingForms
+      settingForms, setSettingForms,
+      expenses, setExpenses
     }}>
   <BrowserRouter>
   
@@ -177,7 +189,7 @@ function App() {
           element={
             <ClientDetail />
           }
-         />
+        />
         <Route path="/projects"
           element={
             <Projects />
@@ -188,9 +200,14 @@ function App() {
             <ProjectDetails />
           }
         />
+        <Route path="/expenses"
+          element={
+            <Expenses />
+          }
+        />
         <Route path="/dashboard" 
           element={
-          <Dashboard/>} />
+            <Dashboard/>} />
       </Routes>
     </div>
 

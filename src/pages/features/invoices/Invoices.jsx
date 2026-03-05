@@ -189,7 +189,7 @@ export default function Invoices() {
     <button onClick={handleSaveInvoices}>Save Invoice</button>
     </div>
     {isModalOpen && (
-      <Modal onClose={()=>setIsModalOpen(false)}>
+      <Modal isOpen={isModalOpen} onClose={()=>setIsModalOpen(false)}>
         <h2  className="modal-title">Edit Invoice</h2>
         <div className='modal-content'>
           <div className='modal-field'>
@@ -255,7 +255,7 @@ export default function Invoices() {
       </thead>
       <tbody>
         {filteredInvoices.map((filteredInvoice) => (
-          <tr>
+          <tr key={filteredInvoice.id}>
               <td>{filteredInvoice.clientName}</td>
               <td>{filteredInvoice.companyName}</td>
               <td>{filteredInvoice.clientEmail}</td>
@@ -263,7 +263,7 @@ export default function Invoices() {
               <td>{filteredInvoice.invoiceNumber}</td>
               <td>{filteredInvoice.paymentTerms || filteredInvoice.type || '-'}</td>
               <td>{filteredInvoice.paid ? "✅ Paid" : 
-                (isOverdue(filteredInvoice) ? 
+                  (isOverdue(filteredInvoice) ?
                 <span>❌ OVERDUE</span> : "❌ Unpaid")}
               </td>
               <td>{filteredInvoice.notes}</td>

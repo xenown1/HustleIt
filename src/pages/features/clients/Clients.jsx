@@ -93,7 +93,7 @@ export default function Clients() {
             paymentType: ""
         })
         setIsModalOpen(false)
-     }
+    }
     
 
 
@@ -248,7 +248,7 @@ export default function Clients() {
     {clients.length > 0 && (
     <div className="table-wrapper">
         {isModalOpen && (
-                    <Modal onClose={() => setIsModalOpen(false)}>
+                    <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                         <div className="modal-content">
                             <h2  className="modal-title">Edit Client</h2>
                             <div className="modal-field">

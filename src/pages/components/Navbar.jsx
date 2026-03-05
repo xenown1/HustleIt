@@ -42,6 +42,7 @@ export default function Navbar() {
                         <NavLink to="/clients" className="nav-item">Clients</NavLink>
                         <NavLink to="/projects" className="nav-item">Projects</NavLink>
                         <NavLink to="/invoices" className="nav-item">Invoices</NavLink>
+                        <NavLink to="/expenses" className="nav-item">Expenses</NavLink>
                         <NavLink to="/settings" className="nav-item">Settings</NavLink>
                         <button onClick={handleLogout} className='btn-logout'>Logout</button>
                     </>
@@ -51,7 +52,7 @@ export default function Navbar() {
             </div>
         </nav>
         {showNotif && (
-            <Modal onClose={() => setShowNotif(false)}>
+            <Modal isOpen={showNotif} onClose={() => setShowNotif(false)}>
                 <h2>Notifications</h2>
                 {notifications.length === 0 ? (
                     <p>No notifications</p>

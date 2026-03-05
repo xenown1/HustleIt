@@ -4,17 +4,19 @@
   --bg-panel: #161616;
   --border-color: #151a47;
   --text-main: #e8e8e8;
+  --text-primary: #e8e8e8;
   --text-muted: #9a9a9a;
   --accent: #3b82f6;
   --danger: #da2a2a;
 }
 
 .light-theme {
-  --bg-main: #f5f6fa;
+  --bg-main: #ffeadc;
   --bg-panel: #ffffff;
-  --border-color: #e5e7eb;
+  --border-color: #944c4c;
   --text-main: #111827;
-  --text-muted: #6b7280;
+  --text-primary: #111827;
+  --text-muted: #010713;
   --accent: #2563eb;
   --danger: #dc2626;
 }
@@ -33,7 +35,8 @@
   border-color: var(--accent-color);
 }
 
-/* ===== GLOBAL RESET ===== */
+
+
 * {
   margin: 0;
   padding: 0;
@@ -255,6 +258,8 @@ body {
   cursor: pointer;
   font-weight: 600;
   transition: 0.2s ease;
+  width: fit-content;
+  margin-bottom: 10px;
 }
 
 .btn-primary:hover {
@@ -386,7 +391,6 @@ tr:hover {
   z-index: 1000;
 }
 
-/* Logo */
 .nav-logo {
   font-size: 18px;
   font-weight: 600;
@@ -394,39 +398,44 @@ tr:hover {
   color: var(--text-main);
 }
 
-/* Nav Links Container */
 .nav-links {
   display: flex;
   gap: 30px;
 }
 
-/* Print helpers: hide printable component on screen, show only during printing */
 .print-only {
   display: none;
 }
 
+@page { margin: 10mm; }
+
 @media print {
-  /* hide everything by default */
   body * {
     visibility: hidden;
   }
 
-  /* show the printable area */
   .print-only, .print-only * {
     visibility: visible;
   }
 
   .print-only {
+    display: block !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
   }
 
-  /* ensure interactive UI is not printed */
   .no-print {
     display: none !important;
   }
+}
+
+.change-color-link a {
+  color: var(--accent);
+  transition: color 0.2s ease;
 }
 
 /* Nav Items */
@@ -946,7 +955,7 @@ textarea {
 /* ===== INPUT & SELECT ===== */
 .modal-field input,
 .modal-field select {
-  background: var(--bg-main);
+  background: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 10px 12px;
@@ -954,6 +963,12 @@ textarea {
   color: var(--text-main);
   outline: none;
   transition: all 0.2s ease;
+}
+
+.form-base input {
+  background: var(--text-main);
+  cursor: text;
+  color: var(--bg-panel);
 }
 
 /* Focus effect */
@@ -1021,6 +1036,7 @@ textarea {
 .invoice-brand h1 {
   margin: 0;
   font-size: 28px;
+  color: var(--bg-panel);
 }
 
 .invoice-brand p {
@@ -1032,11 +1048,18 @@ textarea {
 .invoice-meta p {
   margin: 4px 0;
   font-size: 14px;
+  color: var(--text-muted);
 }
 
 /* ===== CLIENT SECTION ===== */
 .invoice-client {
   margin-bottom: 30px;
+  color: #0f0f0f;
+}
+
+.change-color {
+  color: var(--accent);
+  transition: color 0.2s ease;
 }
 
 .invoice-client h3 {
@@ -1068,53 +1091,18 @@ textarea {
   font-size: 14px;
 }
 
-
 .invoice-total {
   text-align: right;
   font-size: 18px;
   margin-top: 10px;
+  color: var(--danger);
 }
-
 
 .invoice-footer {
   margin-top: 50px;
   font-size: 13px;
   color: #555;
   text-align: center;
-}
-
-
-@media print {
-  body {
-    margin: 0;
-  }
-
-  .print-page {
-    margin: 0;
-    padding: 20px;
-  }
-}
-
-@media print {
-  /* Hide everything except the invoice */
-  body * {
-      visibility: hidden;
-  }
-  
-  .print-page, .print-page * {
-      visibility: visible;
-  }
-  
-  .print-page {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-  }
-  
-  button, nav, .nav-links {
-      display: none !important;
-  }
 }
 
 .settings-page {
@@ -1222,11 +1210,11 @@ textarea {
 .notification {
   position: fixed;
   top: 10px;
-  right: 600px;
+  right: 5px;
   background: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 10px 15px;
+  padding: 10px;
   margin-bottom: 20px;
   cursor: pointer;
 }
@@ -1408,6 +1396,18 @@ textarea {
 .activity-name {
   color: var(--text-main);
   font-size: 14px;
+}
+
+/* Ensure links inside activity list follow the app color scheme (override browser defaults) */
+.activity-name a,
+.activity-list a {
+  color: var(--accent);
+
+}
+.activity-name a:hover,
+.activity-list a:hover {
+  color: var(--accent);
+  text-decoration: underline;
 }
 
 .activity-date {

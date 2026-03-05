@@ -68,7 +68,7 @@ export default function ClientDetail() {
           {client && (
             <>
             {isModalOpen && (
-              <Modal onClose={() => setIsModalOpen(false)}>
+              <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <div className='modal-content'>
                   <h2 className='modal-title'>Edit</h2>
                   <div className='modal-field'>

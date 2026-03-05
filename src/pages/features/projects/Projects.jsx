@@ -197,7 +197,7 @@ export default function Projects() {
     {projects && (
       <div className="table-wrapper">
         {isModalOpen && (
-          <Modal onClose={() => setIsModalOpen(false)}>
+          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
             <div className="modal-content">
               <h2 className="modal-title">Edit Project</h2>
                 
@@ -303,7 +303,7 @@ export default function Projects() {
             return (
               <tr key={filteredProject.id}>
                 
-                <td><Link to={`/projects/${filteredProject.id}`}>{filteredProject.name}</Link></td>
+                <td className='change-color-link'><Link to={`/projects/${filteredProject.id}`}>{filteredProject.name}</Link></td>
                 
                 <td>{client ? client.fullName : "Deleted Client"}</td>
 

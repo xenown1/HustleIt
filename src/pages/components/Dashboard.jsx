@@ -4,7 +4,7 @@ import { UserContext } from '../../context/UserContext'
 
 
 export default function Dashboard() {
-  const { clients, projects, user, invoices } = useContext(UserContext)
+  const { clients, projects, user, invoices, expenses } = useContext(UserContext)
   const navigate = useNavigate()  
   function getRecentActivity() {
     const clientActivities = clients.map(c => ({
@@ -29,7 +29,14 @@ export default function Dashboard() {
       projectId: i.projectId,
       date: i.issueDate
     }))
-    const allActivities = [...clientActivities, ...projectActivities, ...invoiceActivities]
+    const expenseActivities = expenses.map(e => ({
+      type: 'expense',
+      name: e.name,
+      amount: e.amount,
+      category: e.category,
+      date: e.date
+    }))
+    const allActivities = [...clientActivities, ...projectActivities, ...invoiceActivities, ...expenseActivities]
     allActivities.sort((a, b) => new Date(b.date || b.issueDate) - new Date(a.date || a.issueDate))
     return allActivities.slice(0, 10)
   }
@@ -44,6 +51,8 @@ export default function Dashboard() {
   const unpaidTotal = projects
     .filter(p => !p.paid)
     .reduce((total, p) => total + Number(p.amount), 0)
+  const totalExpenses = expenses.reduce((total, e) => total + Number(e.amount), 0)
+  const totalProfit = totalRevenue - totalExpenses
   const activeProjects = projects.filter(p => p.status === "In Progress").length
 
   const overdueInvoices = invoices.filter(i => !i.paid && new Date(i.dueDate) < new Date())
@@ -77,15 +86,16 @@ export default function Dashboard() {
   }
   
 
-
   return (
     <div className="dashboard-container">
       <h1 className="page-title">Dashboard</h1>
 
       <section className="dashboard-section stats-section">
-        
+        <h2 className="section-title">Key Metrics</h2>
         <div className="revenue-stats">
           <p className='revenue-box'>Total Revenue: {formatCurrency(totalRevenue)}</p>
+          <p className='revenue-box'>Total Expenses: {formatCurrency(totalExpenses)}</p>
+          <p className='revenue-box'>💰 Total Profit: {formatCurrency(totalProfit)}</p>
           <p className='revenue-box'>Total Clients: {totalClients}</p>
           <p className='revenue-box'>Total Projects: {totalProjects}</p>
           <p className='revenue-box'>Amount Unpaid: {formatCurrency(unpaidTotal)}</p>
@@ -119,7 +129,7 @@ export default function Dashboard() {
       ) : (
         displayElement
       );
-
+      
       return (
         <li key={index} className="activity-item">
           <div className="activity-content">
@@ -132,6 +142,7 @@ export default function Dashboard() {
             {activity.type === 'client' && activity.company ? `${activity.company}` : ''}
             {activity.type === 'project' && activity.date ? `Created at - (${formatDate(activity.date)})` : ''}
             {activity.type === 'invoice' && activity.paid !== undefined ? (activity.paid ? "Paid" : "Unpaid") : ''}
+            {activity.type === 'expense' ? `${activity.category} - ${formatCurrency(activity.amount)}` : ''}
           </span>
         </li>
       )
@@ -144,7 +155,7 @@ export default function Dashboard() {
     <div className="recent-projects">
   <h2>Recent Projects</h2>
   <div className="cards-grid">
-    {projects.length === 0 && <p>No recent projects.</p>}
+    {projects.length === 0 && <span>No recent projects.</span>}
     {projects.slice(0, 5).map(p => {
       const client = getClient(p.clientId)
         const hasClient = client && client.id;
@@ -152,7 +163,7 @@ export default function Dashboard() {
       return (
         <div key={p.id} className='project-card'>
           <h3>{p.name}</h3>
-      <p>
+      <div>
         Client:{' '}
         {hasClient ? (
           <Link to={`/clients/${client.id}`}>
@@ -166,7 +177,7 @@ export default function Dashboard() {
           {getStatusBadge(p.status)}
           {getPaymentBadge(p.paid)}
           {getOverdueBadge(p.dueDate || p.issueDate, p.paid)}
-      </p>
+      </div>
 
         </div>
       )
