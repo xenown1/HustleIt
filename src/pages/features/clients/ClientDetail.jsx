@@ -10,7 +10,7 @@ import Modal from '../../components/Modal'
 
 export default function ClientDetail() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-    const {clients, projects, invoices, setClients} = useContext(UserContext)
+    const {clients, projects, invoices, expenses, setClients} = useContext(UserContext)
     const {id} = useParams()
     const client = clients.find(c => c.id === id)
     const clientProjects = projects.filter(p => p.clientId === id)
@@ -19,6 +19,8 @@ export default function ClientDetail() {
     .filter(p=> p.paid === false)
     .reduce((total, p) => total + Number(p.amount),0)
     const clientInvoices = invoices.filter(i => i.clientId === id)
+    const projectIds = clientProjects.map(p => p.id)
+    const clientExpenses = expenses.filter(e => projectIds.includes(e.projectId))
     const navigate = useNavigate()
     const [editingId, setEditingId] = useState(null)
     const [editingFields, setEditingFields] = useState({
@@ -166,6 +168,27 @@ export default function ClientDetail() {
             <span className={`status ${i.paid ? "paid" : "unpaid"}`}>{i.paid ? "Paid" : "Unpaid"}</span>
           </div>
         ))
+        )}
+      </div>
+    </div>
+    <div className="client-detail-section">
+      <h2>Expenses</h2>
+      <div className="table">
+        <div className="table-header">
+          <span>Name</span>
+          <span>Amount</span>
+          <span>Category</span>
+        </div>
+        {clientExpenses.length === 0 ? (
+          <p>No Expenses</p>
+        ) : (
+          clientExpenses.map(e => (
+            <div key={e.id} className="table-row">
+              <span>{e.name}</span>
+              <span>${e.amount}</span>
+              <span>{e.category}</span>
+            </div>
+          ))
         )}
       </div>
     </div>

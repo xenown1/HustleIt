@@ -15,6 +15,7 @@ import PrintableInvoice from './pages/features/invoices/PrintableInvoice';
 import Settings from './pages/features/settings/Settings';
 import ProjectDetails from './pages/features/projects/ProjectDetails';
 import Expenses from './pages/features/expenses/Expenses';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 function App() {
@@ -139,7 +140,7 @@ function App() {
           className="theme-toggle"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         >
-          {theme === "dark" ? "Light Mode" : "Dark Mode"}
+          {theme === "dark" ? `${<FontAwesomeIcon icon="sun"/>}` : `${<FontAwesomeIcon icon="moon" />}`}
       </button>
       <div className="nav-links">
         <Navbar/>
@@ -185,7 +186,7 @@ function App() {
             <Clients />
           }
         />
-        <Route path='/clients/:id'
+        <Route path='/clients/:idlight'
           element={
             <ClientDetail />
           }

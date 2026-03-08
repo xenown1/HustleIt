@@ -113,9 +113,9 @@ export default function Expenses() {
             <h3>Total Count</h3>
             <p className="stat-value">{expenses.length}</p>
         </div>
-    </div>
+      </div>
 
-    <div className="filters-search">
+    <div className="modal-field">
         <input
             type="text"
             placeholder="Search expenses..."
@@ -126,7 +126,7 @@ export default function Expenses() {
         <select 
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            className="filter-dropdown"
+            className="modal-group"
         >
             <option value="all">All Categories</option>
             {categories.map(cat => (

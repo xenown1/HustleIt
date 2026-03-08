@@ -91,7 +91,6 @@ export default function Dashboard() {
       <h1 className="page-title">Dashboard</h1>
 
       <section className="dashboard-section stats-section">
-        <h2 className="section-title">Key Metrics</h2>
         <div className="revenue-stats">
           <p className='revenue-box'>Total Revenue: {formatCurrency(totalRevenue)}</p>
           <p className='revenue-box'>Total Expenses: {formatCurrency(totalExpenses)}</p>

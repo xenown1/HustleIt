@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 
 import { v4 as uuidv4} from 'uuid'
 import useClients from '../clients/useClients'
@@ -7,10 +7,15 @@ import useInvoices from './useInvoices'
 import Modal from '../../components/Modal'
 import PrintableInvoice from './PrintableInvoice'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { UserContext } from '../../../context/UserContext'
+import { sendInvoiceEmail } from '../../../services/emailService'
 
 export default function Invoices() {
   const {invoices, setInvoices} = useInvoices()
+  const { settingForms } = useContext(UserContext)
   const [search, setSearch] = useState("")
+  const [emailLoading, setEmailLoading] = useState(null)
+  const [emailMessage, setEmailMessage] = useState(null)
   const filteredInvoices = invoices.filter(i => {
     const s = search.toLowerCase()
     if (!s) return true
@@ -129,6 +134,25 @@ export default function Invoices() {
     return dueDate < today
   }
 
+  async function handleSendInvoice(invoice){
+    setEmailLoading(invoice.id)
+    setEmailMessage(null)
+    
+    try {
+      const result = await sendInvoiceEmail(invoice, settingForms)
+      
+      if (result.success) {
+        setEmailMessage({ type: 'success', text: result.message })
+        setTimeout(() => setEmailMessage(null), 5000)
+      } else {
+        setEmailMessage({ type: 'error', text: result.message })
+      }
+    } catch (error) {
+      setEmailMessage({ type: 'error', text: 'Error sending email' })
+    } finally {
+      setEmailLoading(null)
+    }
+  }
 
   
   return (
@@ -145,6 +169,11 @@ export default function Invoices() {
           />
         </div>
     </div>
+    {emailMessage && (
+      <div className={`email-message email-${emailMessage.type}`}>
+        {emailMessage.text}
+      </div>
+    )}
     <div  className="client-form">
       
       <select
@@ -282,6 +311,12 @@ export default function Invoices() {
                 className='btn btn-add' 
                 onClick={() => handlePrint(filteredInvoice)}
                 ><FontAwesomeIcon icon="print" /></button>
+                <button
+                className='btn btn-email'
+                onClick={() => handleSendInvoice(filteredInvoice)}
+                disabled={emailLoading === filteredInvoice.id}
+                title="Send invoice via email"
+                ><FontAwesomeIcon icon="envelope" /></button>
                 </td>
             </tr>
         ))}

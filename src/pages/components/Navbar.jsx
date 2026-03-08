@@ -5,6 +5,7 @@ import { UserContext } from '../../context/UserContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Modal from './Modal'
 
+
 export default function Navbar() {
     const { user, setUser} = useAuth()
     const { invoices } = useContext(UserContext) // notifications source
@@ -41,8 +42,19 @@ export default function Navbar() {
                         <NavLink to="/dashboard" className="nav-item">Dashboard</NavLink>
                         <NavLink to="/clients" className="nav-item">Clients</NavLink>
                         <NavLink to="/projects" className="nav-item">Projects</NavLink>
-                        <NavLink to="/invoices" className="nav-item">Invoices</NavLink>
-                        <NavLink to="/expenses" className="nav-item">Expenses</NavLink>
+                        <div className='modal-field'>
+                        
+                        <select onChange={(e) => navigate(e.target.value)}>
+                            <option value="">More</option>
+                            <option value="/Expenses">
+                                <NavLink to="/expenses" className="nav-item">Expenses</NavLink>
+                            </option>
+                            <option value="/Invoices">
+                                <NavLink to="/reports/invoices" className="nav-item">Invoices</NavLink>
+                            </option>
+                        </select>
+                        </div>
+                        
                         <NavLink to="/settings" className="nav-item">Settings</NavLink>
                         <button onClick={handleLogout} className='btn-logout'>Logout</button>
                     </>
